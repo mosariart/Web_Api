@@ -1,5 +1,6 @@
 ﻿using Cinema_API.Data;
 using Cinema_API.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -21,42 +22,69 @@ namespace Cinema_API.Controllers
         }
         // GET: api/<MoviesController>
         [HttpGet]
-        public IEnumerable<Movie> Get()
+        public IActionResult Get()
         {
-            return _dbContext.Movies.ToList();
+            //return _dbContext.Movies.ToList();
+            return Ok(_dbContext.Movies.ToList());
+            //return StatusCode(StatusCodes.Status200OK);
         }
 
         // GET api/<MoviesController>/5
         [HttpGet("{id}")]
-        public Movie Get(int id)
+        public IActionResult Get(int id)
         {
-            return _dbContext.Movies.Where(m => m.Id == id).First();
+            var movieToFind = _dbContext.Movies.Where(m => m.Id == id).First();
+            if (movieToFind == null)
+            {
+                return NotFound("No content with this Id");
+            }
+            return Ok(movieToFind);
         }
 
         // POST api/<MoviesController>
         [HttpPost]
-        public void Post([FromBody] Movie movie)
+        public IActionResult Post([FromBody] Movie movie)
         {
             _dbContext.Movies.Add(movie);
             _dbContext.SaveChanges();
+            return StatusCode(StatusCodes.Status201Created);
         }
 
         // PUT api/<MoviesController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] Movie movie)
+        public IActionResult Put(int id, [FromBody] Movie movie)
         {
             var movieToChange = _dbContext.Movies.Where(mov => mov.Id == id).First();
-            movieToChange.Language = movie.Language;
-            movieToChange.Name = movie.Name;
-            _dbContext.SaveChanges();
+            if (movieToChange == null)
+            {
+                return NotFound("No record found with this Id");
+            }
+            else
+            {
+                movieToChange.Language = movie.Language;
+                movieToChange.Name = movie.Name;
+                _dbContext.SaveChanges();
+                return Ok("Record Updated successfully");
+            }
+
         }
 
         // DELETE api/<MoviesController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult Delete(int id)
         {
-            _dbContext.Movies.Remove(_dbContext.Movies.Where(mov => mov.Id == id).First());
-            _dbContext.SaveChanges();
+            var movieToDelete = _dbContext.Movies.Where(mov => mov.Id == id).First();
+            if (movieToDelete == null)
+            {
+                return NotFound("No record Was found with thid id");
+            }
+            else
+            {
+                _dbContext.Movies.Remove(movieToDelete);
+                _dbContext.SaveChanges();
+                return Ok();
+            }
+
         }
     }
 }
