@@ -22,11 +22,14 @@ namespace Cinema_API.Controllers
             _dbContext = dbContext;
         }
         // GET: api/<MoviesController>
+
+
         [HttpGet]
         public IActionResult Get()
         {
+            var movies = _dbContext.Movies.ToList();
             //return _dbContext.Movies.ToList();
-            return Ok(_dbContext.Movies.ToList());
+              return Ok(movies);
             //return StatusCode(StatusCodes.Status200OK);
         }
 
@@ -40,6 +43,14 @@ namespace Cinema_API.Controllers
                 return NotFound("No content with this Id");
             }
             return Ok(movieToFind);
+        }
+
+
+        // GET api/<MoviesController>/Test/4
+        [HttpGet("[action]/{id}")]
+        public int Test(int id)
+        {
+            return id;
         }
 
         // POST api/<MoviesController>
