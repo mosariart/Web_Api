@@ -30,6 +30,7 @@ namespace Cinema_API
         {
 
             services.AddControllers();
+            services.AddMvc().AddXmlSerializerFormatters();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Cinema_API", Version = "v1" });
