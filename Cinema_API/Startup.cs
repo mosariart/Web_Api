@@ -39,7 +39,7 @@ namespace Cinema_API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, CinemaDbContext dbContext)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -53,7 +53,6 @@ namespace Cinema_API
             app.UseRouting();
 
             app.UseAuthorization();
-            dbContext.Database.EnsureCreated();
 
             app.UseEndpoints(endpoints =>
             {
