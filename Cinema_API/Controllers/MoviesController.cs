@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -42,17 +43,51 @@ namespace Cinema_API.Controllers
         }
 
         // POST api/<MoviesController>
+        //[HttpPost]
+        //public IActionResult Post([FromBody] Movie movie)
+        //{
+        //    _dbContext.Movies.Add(movie);
+        //    _dbContext.SaveChanges();
+        //    return StatusCode(StatusCodes.Status201Created);
+        //}
         [HttpPost]
-        public IActionResult Post([FromBody] Movie movie)
+        public IActionResult Post([FromForm] Movie movie)
         {
+            var guid = Guid.NewGuid();
+            var filepath = Path.Combine("wwwroot", guid + ".jpg");
+            if (movie.Image != null)
+            {
+                var fileStream = new FileStream(filepath, FileMode.Create);
+                movie.Image.CopyTo(fileStream);
+            }
+            movie.ImageUrl = filepath.Remove(0,7);
             _dbContext.Movies.Add(movie);
             _dbContext.SaveChanges();
             return StatusCode(StatusCodes.Status201Created);
         }
 
         // PUT api/<MoviesController>/5
+        //[HttpPut("{id}")]
+        //public IActionResult Put(int id, [FromBody] Movie movie)
+        //{
+        //    var movieToChange = _dbContext.Movies.Where(mov => mov.Id == id).First();
+        //    if (movieToChange == null)
+        //    {
+        //        return NotFound("No record found with this Id");
+        //    }
+        //    else
+        //    {
+        //        movieToChange.Language = movie.Language;
+        //        movieToChange.Name = movie.Name;
+        //        movieToChange.Rating = movie.Rating;
+        //        _dbContext.SaveChanges();
+        //        return Ok("Record Updated successfully");
+        //    }
+
+        //}
+
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] Movie movie)
+        public IActionResult Put(int id, [FromForm] Movie movie)
         {
             var movieToChange = _dbContext.Movies.Where(mov => mov.Id == id).First();
             if (movieToChange == null)
@@ -61,6 +96,16 @@ namespace Cinema_API.Controllers
             }
             else
             {
+                var guid = Guid.NewGuid();
+                var filepath = Path.Combine("wwwroot", guid + ".jpg");
+                if (movie.Image != null)
+                {
+                    var fileStream = new FileStream(filepath, FileMode.Create);
+                    movie.Image.CopyTo(fileStream);
+                    movie.ImageUrl = filepath.Remove(0, 7);
+
+                }
+
                 movieToChange.Language = movie.Language;
                 movieToChange.Name = movie.Name;
                 movieToChange.Rating = movie.Rating;
