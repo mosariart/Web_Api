@@ -1,4 +1,5 @@
-﻿using Cinema_API.Data;
+﻿using AuthenticationPlugin;
+using Cinema_API.Data;
 using Cinema_API.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -30,7 +31,7 @@ namespace Cinema_API.Controllers
             {
                 Email = user.Email,
                 Name = user.Name,
-                Password = user.Password,
+                Password = SecurePasswordHasherHelper.Hash(user.Password) ,
                 Role = "Users"
             };
             _dbContext.Users.Add(userObj);
